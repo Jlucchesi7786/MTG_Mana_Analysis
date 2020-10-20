@@ -264,14 +264,34 @@ public class Runner {
 
 	public static void play(Card c) {
 		if (canCast(c)) {
-			board.add(c);
+			print("Played a " + c.cardName + "!");
+			cast(c);
 			hand.remove(c);
+			board.add(c);
 		}
 		sortBoard();
 	}
 
 	public static void cast(Card c) {
 		String req = c.cardColor;
+		
+		for (int i = 0; i < c.coloredManaReq; i++) {
+			for (String color: manaPool) {
+				if (req.equals(color)) {
+					manaPool.remove(color);
+					break;
+				}
+			}
+		}
+		
+		for (int i = 0; i < c.cmc - c.coloredManaReq; i++) {
+			for (String color: manaPool) {
+				if (!req.equals(color)) {
+					manaPool.remove(color);
+					break;
+				}
+			}
+		}
 	}
 
 	public static int numLands() {
@@ -390,6 +410,10 @@ public class Runner {
 		return readSet(board, "board");
 	}
 
+	public static String readHand() {
+		return readSet(hand, "hand");
+	}
+
 	public static String readSet(ArrayList<Card> set, String setName) {
 		String s = "";
 		if (set.size() > 0) {
@@ -444,10 +468,6 @@ public class Runner {
 		}
 
 		return s;
-	}
-
-	public static String readHand() {
-		return readSet(hand, "hand");
 	}
 
 	public static void print(String s) {
