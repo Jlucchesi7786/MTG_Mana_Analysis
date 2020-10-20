@@ -3,6 +3,7 @@ import lands.*;
 import cards.*;
 import java.util.*;
 
+// we did it!
 public class Runner {
 	static ArrayList<Card> deck = new ArrayList<Card>();
 	static ArrayList<Card> hand = new ArrayList<Card>();
@@ -12,14 +13,14 @@ public class Runner {
 	static int goalCmc;
 	static String goalCardName;
 	static Card goalCard;
-	
+
 	static ArrayList<String> manaPool = new ArrayList<String>();
-	
+
 	static int turn;
 	static boolean drewFirstTurn = false;
-	
+
 	static int numTypeLandsInHand = 0;
-	
+
 	public static void main(String[] args) {
 		for (int i = 0; i < 15; i++) {
 			deck.add(new Swamp());
@@ -39,14 +40,14 @@ public class Runner {
 			}
 		}
 		takeFirstTurn();
-		
+
 		do {
 			takeTurn();
 		} while (!canCastGoalCard());
-		
+
 		print("It took " + turn + " turns to cast one instance of " + goalCard.cardName + ".");
 	}
-	
+
 	public static void takeFirstTurn() {
 		sort(deck);
 		print(readSet(deck, "deck"));
@@ -61,10 +62,10 @@ public class Runner {
 			drewFirstTurn = true;
 		}
 	}
-	
+
 	public static void takeTurn() {
 		turn++;
-		
+
 		if (turn != 1) {
 			draw();
 		}
@@ -89,13 +90,13 @@ public class Runner {
 		}
 		clearManaPool();
 	}
-	
+
 	public static void draw(int num) {
 		for (int i = 0; i < num; i++) {
 			draw();
 		}
 	}
-	
+
 	public static void draw() {
 		if (deck.size() > 0) {
 			hand.add(deck.get(0));
@@ -103,7 +104,7 @@ public class Runner {
 			deck.remove(0);
 		}
 	}
-	
+
 	public static void playLand() {
 		if (numTypeOfLandsInHand() == 0) {
 			return;
@@ -114,7 +115,7 @@ public class Runner {
 			play(hand.get(0));
 			return;
 		}
-		
+
 		if (isInHand(goalCard) && !boardHasManaReq(goalCard)) {
 			for (int i = 0; i < numLandsInHand(); i++) {
 				Land z = (Land) hand.get(i);
@@ -162,7 +163,7 @@ public class Runner {
 			//play(hand.get(numLandsOfType(board.get(0), hand)));
 		}*/
 	}
-	
+
 	public static boolean boardHasManaReq(Card c) {
 		int num = 0;
 		for (String color: manaPool) {
@@ -182,10 +183,10 @@ public class Runner {
 				}
 			}
 		}*/
-		
+
 		return false;
 	}
-	
+
 	public static boolean boardHasReqForGoal() {
 		int num = 0;
 		for (int i = 0; i < numLands(); i++) {
@@ -197,10 +198,10 @@ public class Runner {
 				}
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public static int numTypeOfLandsInSet(ArrayList<Card> set) {
 		ArrayList<String> listOfLands = new ArrayList<String>();
 		for (Card c: set) {
@@ -208,18 +209,18 @@ public class Runner {
 				listOfLands.add(c.cardName);
 			}
 		}
-		
+
 		return listOfLands.size();
 	}
-	
+
 	public static int numTypeOfLandsInHand() {
 		return numTypeOfLandsInSet(hand);
 	}
-	
+
 	public static int numTypeOfLandsOnBoard() {
 		return numTypeOfLandsInSet(board);
 	}
-	
+
 	public static int numLandsOfType(String name, ArrayList<Card> list) {
 		int num = 0;
 		for (Card c: list) {
@@ -227,29 +228,29 @@ public class Runner {
 				num++;
 			}
 		}
-		
+
 		return num;
 	}
-	
+
 	public static int numLandsOfType(Card c, ArrayList<Card> list) {
 		return numLandsOfType(c.cardName, list);
 	}
-	
+
 	public static boolean isInHand(Card c) {
 		return isInSet(c, hand);
 	}
-	
+
 	public static boolean isOnBoard(Card c) {
 		return isInSet(c, board);
 	}
-	
+
 	public static boolean isInSet(Card c, ArrayList<Card> set) {
 		for (Card z: set) {
 			if (z.equals(c)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -261,7 +262,7 @@ public class Runner {
 		}
 		return false;
 	}
-	
+
 	public static void play(Card c) {
 		if (canCast(c)) {
 			board.add(c);
@@ -269,60 +270,60 @@ public class Runner {
 		}
 		sortBoard();
 	}
-	
+
 	public static void cast(Card c) {
 		String req = c.cardColor;
 	}
-	
+
 	public static int numLands() {
 		return numLandsInSet(board);
 	}
-	
+
 	public static int numLandsInHand() {
 		return numLandsInSet(hand);
 	}
-	
+
 	public static int numLandsInSet(ArrayList<Card> set) {
 		if (set.size() == 0) {
 			return 0;
 		}
-		
+
 		int num = 0;
 		for (Card c: set) {
 			if (c.isLand) {
 				num++;
 			}
 		}
-		
+
 		return num;
 	}
-	
+
 	public static boolean canCastGoalCard() {
 		if ((goalCard.cmc == 0 || (numLands() >= goalCard.cmc && boardHasReqForGoal())) && cardInHand(goalCard)) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static boolean canCast(Card c) {
 		if ((c.cmc == 0 || (manaPool.size() >= c.cmc && boardHasManaReq(c))) && cardInHand(c)) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static boolean cardInHand(Card c) {
 		for (Card z: hand) {
 			if (z.equals(c)) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public static void shuffle() {
 		ArrayList<Card> newDeck = new ArrayList<Card>();
 		while (deck.size() > 0) {
@@ -332,20 +333,20 @@ public class Runner {
 		}
 		deck = newDeck;
 	}
-	
+
 	public static void addMana() {
 		for (int i = 0; i < numLands(); i++) {
 			manaPool.add(((Land) board.get(i)).color);
 		}
 	}
-	
+
 	public static void clearManaPool() {
 		int size = manaPool.size();
 		for (int i = 0; i < size; i++) {
 			manaPool.remove(0);
 		}
 	}
-	
+
 	public static void sort(ArrayList<Card> list) {
 		for (int i = 0; i < list.size()-1; i++) {
 			for (int z = i+1; z < list.size(); z++) {
@@ -363,40 +364,40 @@ public class Runner {
 			}
 		}
 	}
-	
+
 	public static void sortHand() {
 		sort(hand);
 	}
-	
+
 	public static void sortBoard() {
 		sort(board);
 	}
-	
+
 	public static void swap(ArrayList<Card> list, int index1, int index2) {
 		Card c = list.get(index1);
 		list.set(index1, list.get(index2));
 		list.set(index2, c);
 	}
-	
+
 	public static void showHand() {
 		print(readHand());
 	}
-	
+
 	public static void showBoard() {
 		print(readBoard());
 	}
-	
+
 	public static String readBoard() {
 		return readSet(board, "board");
 	}
-	
+
 	public static String readSet(ArrayList<Card> set, String setName) {
 		String s = "";
 		if (set.size() > 0) {
 			s += "Your " + setName + " consists of: ";
 			ArrayList<String> names = new ArrayList<String>();
 			ArrayList<Integer> nums = new ArrayList<Integer>();
-			
+
 			names.add(set.get(0).cardName);
 			for (Card c: set) {
 				if (c.cardName.equals(names.get(names.size()-1))) continue;
@@ -405,7 +406,7 @@ public class Runner {
 					if (!c.cardName.equals(z)) {
 						newName = true;
 						break;
-					} 
+					}
 				}
 				if (newName) {
 					names.add(c.cardName);
@@ -419,12 +420,12 @@ public class Runner {
 					}
 				}
 			}
-			
+
 			for (int i = 0; i < names.size(); i++) {
 				Character end = names.get(i).charAt(names.get(i).length()-1);
 				if (i != names.size()-1) {
 					if (nums.get(i) > 1 && !end.equals('s')) {
-						s += nums.get(i) + " " + names.get(i) + "s, ";	
+						s += nums.get(i) + " " + names.get(i) + "s, ";
 					} else {
 						s += nums.get(i) + " " + names.get(i) + ", ";
 					}
@@ -433,7 +434,7 @@ public class Runner {
 						s += "and ";
 					}
 					if (nums.get(i) > 1 && !end.equals('s')) {
-						s += nums.get(i) + " " + names.get(i) + "s.";	
+						s += nums.get(i) + " " + names.get(i) + "s.";
 					} else {
 						s += nums.get(i) + " " + names.get(i) + ".";
 					}
@@ -442,18 +443,18 @@ public class Runner {
 		} else {
 			s += "Your " + setName + " has no cards in it.";
 		}
-		
+
 		return s;
 	}
-	
+
 	public static String readHand() {
 		return readSet(hand, "hand");
 	}
-	
+
 	public static void print(String s) {
 		System.out.println(s);
 	}
-	
+
 	public static void test() {
 		System.out.println("yes");
 	}
