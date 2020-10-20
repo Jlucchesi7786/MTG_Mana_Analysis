@@ -29,6 +29,7 @@ public class Runner {
 			deck.add(new Murder());
 			deck.add(new Disenchant());
 		}
+		
 		/*System.out.println("Enter a card name:");
 		goalCardName = reader.nextLine();*/
 		goalCardName = "Murder";
@@ -39,18 +40,25 @@ public class Runner {
 			}
 		}
 		takeFirstTurn();
+		
 
-		do {
+		while (true) {
+			deck.add(new Plains());
+			Sets.show(deck, "deck");
+			Sets.shuffle(deck);
+		}
+		/*do {
 			takeTurn();
-		} while (!canCastGoalCard());
 
-		print("It took " + turn + " turns to cast one instance of " + goalCard.cardName + ".");
+		} while (!canCastGoalCard());
+		*/
+		//print("It took " + turn + " turns to cast one instance of " + goalCard.cardName + ".");
 	}
 
 	public static void takeFirstTurn() {
-		sort(deck);
-		print(readSet(deck, "deck"));
-		shuffle();
+		Sets.sort(deck);
+		Sets.show(deck, "deck");
+		Sets.shuffle(deck);
 		draw(7);
 		drewFirstTurn = false;
 		turn = 0;
@@ -68,13 +76,13 @@ public class Runner {
 		if (turn != 1) {
 			draw();
 		}
-		sortHand();
-		sortBoard();
-		showHand();
+		Sets.sort(hand);
+		Sets.sort(board);
+		Sets.show(hand, "hand");
 		ArrayList<Card> hand2 = new ArrayList<Card>();
 		playLand();
 		addMana();
-		showBoard();
+		Sets.show(board, "board");
 		print("\n");
 		for (Card c: hand) {
 			hand2.add(c);
@@ -105,18 +113,18 @@ public class Runner {
 	}
 
 	public static void playLand() {
-		if (numTypeOfLandsInHand() == 0) {
+		if (Sets.numTypeOfLandsInSet(hand) == 0) {
 			return;
-		} else if (numLands() == 0 && hand.get(0).isLand) {
+		} else if (Sets.numLandsInSet(board) == 0 && hand.get(0).isLand) {
 			play(hand.get(0));
 			return;
-		} else if (numTypeOfLandsInHand() == 1 && hand.get(0).isLand) {
+		} else if (Sets.numLandsInSet(hand) == 1 && hand.get(0).isLand) {
 			play(hand.get(0));
 			return;
 		}
 
-		if (isInHand(goalCard) && !boardHasManaReq(goalCard)) {
-			for (int i = 0; i < numLandsInHand(); i++) {
+		if (Sets.cardIsInSet(goalCard, hand) && !boardHasManaReq(goalCard)) {
+			for (int i = 0; i < Sets.numLandsInSet(hand); i++) {
 				Land z = (Land) hand.get(i);
 				if (z.color.equals(goalCard.cardColor)) {
 					play(hand.get(i));
@@ -134,7 +142,7 @@ public class Runner {
 				}
 			}
 			if (otherCardsInHand) {
-				for (int i = 0; i < numLandsInHand(); i++) {
+				for (int i = 0; i < Sets.numLandsInSet(hand); i++) {
 					Land z = (Land) hand.get(i);
 					if (z.color.equals(manaNeeded)) {
 						play(hand.get(i));
@@ -188,7 +196,7 @@ public class Runner {
 
 	public static boolean boardHasReqForGoal() {
 		int num = 0;
-		for (int i = 0; i < numLands(); i++) {
+		for (int i = 0; i < Sets.numLandsInSet(board); i++) {
 			Land z = (Land) board.get(i);
 			if (z.color.equals(goalCard.cardColor)) {
 				num++;
@@ -201,67 +209,6 @@ public class Runner {
 		return false;
 	}
 
-	public static int numTypeOfLandsInSet(ArrayList<Card> set) {
-		ArrayList<String> listOfLands = new ArrayList<String>();
-		for (Card c: set) {
-			if (c.isLand && (listOfLands.size() == 0 || !isInList(c.cardName, listOfLands))) {
-				listOfLands.add(c.cardName);
-			}
-		}
-
-		return listOfLands.size();
-	}
-
-	public static int numTypeOfLandsInHand() {
-		return numTypeOfLandsInSet(hand);
-	}
-
-	public static int numTypeOfLandsOnBoard() {
-		return numTypeOfLandsInSet(board);
-	}
-
-	public static int numLandsOfType(String name, ArrayList<Card> list) {
-		int num = 0;
-		for (Card c: list) {
-			if (c.cardName.equals(name)) {
-				num++;
-			}
-		}
-
-		return num;
-	}
-
-	public static int numLandsOfType(Card c, ArrayList<Card> list) {
-		return numLandsOfType(c.cardName, list);
-	}
-
-	public static boolean isInHand(Card c) {
-		return isInSet(c, hand);
-	}
-
-	public static boolean isOnBoard(Card c) {
-		return isInSet(c, board);
-	}
-
-	public static boolean isInSet(Card c, ArrayList<Card> set) {
-		for (Card z: set) {
-			if (z.equals(c)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public static boolean isInList(String s, ArrayList<String> list) {
-		for (String z: list) {
-			if (s.equals(z)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 	public static void play(Card c) {
 		if (canCast(c)) {
 			print("Played a " + c.cardName + "!");
@@ -269,7 +216,7 @@ public class Runner {
 			hand.remove(c);
 			board.add(c);
 		}
-		sortBoard();
+		Sets.sort(board);
 	}
 
 	public static void cast(Card c) {
@@ -294,31 +241,9 @@ public class Runner {
 		}
 	}
 
-	public static int numLands() {
-		return numLandsInSet(board);
-	}
-
-	public static int numLandsInHand() {
-		return numLandsInSet(hand);
-	}
-
-	public static int numLandsInSet(ArrayList<Card> set) {
-		if (set.size() == 0) {
-			return 0;
-		}
-
-		int num = 0;
-		for (Card c: set) {
-			if (c.isLand) {
-				num++;
-			}
-		}
-
-		return num;
-	}
-
 	public static boolean canCastGoalCard() {
-		if ((goalCard.cmc == 0 || (numLands() >= goalCard.cmc && boardHasReqForGoal())) && cardInHand(goalCard)) {
+		if ((goalCard.cmc == 0 || (Sets.numLandsInSet(board) >= goalCard.cmc && boardHasReqForGoal())) 
+				&& Sets.cardIsInSet(goalCard, hand)) {
 			return true;
 		}
 
@@ -326,35 +251,15 @@ public class Runner {
 	}
 
 	public static boolean canCast(Card c) {
-		if ((c.cmc == 0 || (manaPool.size() >= c.cmc && boardHasManaReq(c))) && cardInHand(c)) {
+		if ((c.cmc == 0 || (manaPool.size() >= c.cmc && boardHasManaReq(c))) && Sets.cardIsInSet(c, hand)) {
 			return true;
 		}
 
 		return false;
 	}
 
-	public static boolean cardInHand(Card c) {
-		for (Card z: hand) {
-			if (z.equals(c)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	public static void shuffle() {
-		ArrayList<Card> newDeck = new ArrayList<Card>();
-		while (deck.size() > 0) {
-			int index = (int) (Math.random()*deck.size());
-			newDeck.add(deck.get(index));
-			deck.remove(index);
-		}
-		deck = newDeck;
-	}
-
 	public static void addMana() {
-		for (int i = 0; i < numLands(); i++) {
+		for (int i = 0; i < Sets.numLandsInSet(board); i++) {
 			manaPool.add(((Land) board.get(i)).color);
 		}
 	}
@@ -364,110 +269,6 @@ public class Runner {
 		for (int i = 0; i < size; i++) {
 			manaPool.remove(0);
 		}
-	}
-
-	public static void sort(ArrayList<Card> list) {
-		for (int i = 0; i < list.size()-1; i++) {
-			for (int z = i+1; z < list.size(); z++) {
-				if (!list.get(i).isLand && list.get(z).isLand) {
-					swap(list, i, z);
-				}
-			}
-		}
-		for (int i = 0; i < list.size()-1; i++) {
-			for (int z = i+1; z < list.size(); z++) {
-				if (list.get(z).cardName.equals(list.get(i).cardName)) {
-					swap(list, i+1, z);
-					break;
-				}
-			}
-		}
-	}
-
-	public static void sortHand() {
-		sort(hand);
-	}
-
-	public static void sortBoard() {
-		sort(board);
-	}
-
-	public static void swap(ArrayList<Card> list, int index1, int index2) {
-		Card c = list.get(index1);
-		list.set(index1, list.get(index2));
-		list.set(index2, c);
-	}
-
-	public static void showHand() {
-		print(readHand());
-	}
-
-	public static void showBoard() {
-		print(readBoard());
-	}
-
-	public static String readBoard() {
-		return readSet(board, "board");
-	}
-
-	public static String readHand() {
-		return readSet(hand, "hand");
-	}
-
-	public static String readSet(ArrayList<Card> set, String setName) {
-		String s = "";
-		if (set.size() > 0) {
-			s += "Your " + setName + " consists of: ";
-			ArrayList<String> names = new ArrayList<String>();
-			ArrayList<Integer> nums = new ArrayList<Integer>();
-
-			names.add(set.get(0).cardName);
-			for (Card c: set) {
-				if (c.cardName.equals(names.get(names.size()-1))) continue;
-				boolean newName = false;
-				for (String z: names) {
-					if (!c.cardName.equals(z)) {
-						newName = true;
-						break;
-					}
-				}
-				if (newName) {
-					names.add(c.cardName);
-				}
-			}
-			for (String z: names) {
-				nums.add(0);
-				for (Card c: set) {
-					if (c.cardName.equals(z)) {
-						nums.set(nums.size()-1, nums.get(nums.size()-1) + 1);
-					}
-				}
-			}
-
-			for (int i = 0; i < names.size(); i++) {
-				Character end = names.get(i).charAt(names.get(i).length()-1);
-				if (i != names.size()-1) {
-					if (nums.get(i) > 1 && !end.equals('s')) {
-						s += nums.get(i) + " " + names.get(i) + "s, ";
-					} else {
-						s += nums.get(i) + " " + names.get(i) + ", ";
-					}
-				} else {
-					if (names.size() > 1) {
-						s += "and ";
-					}
-					if (nums.get(i) > 1 && !end.equals('s')) {
-						s += nums.get(i) + " " + names.get(i) + "s.";
-					} else {
-						s += nums.get(i) + " " + names.get(i) + ".";
-					}
-				}
-			}
-		} else {
-			s += "Your " + setName + " has no cards in it.";
-		}
-
-		return s;
 	}
 
 	public static void print(String s) {
