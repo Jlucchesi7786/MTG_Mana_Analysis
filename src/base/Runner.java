@@ -3,7 +3,6 @@ import lands.*;
 import cards.*;
 import java.util.*;
 
-// did we?
 public class Runner {
 	static ArrayList<Card> deck = new ArrayList<Card>();
 	static ArrayList<Card> hand = new ArrayList<Card>();

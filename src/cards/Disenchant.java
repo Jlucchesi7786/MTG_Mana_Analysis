@@ -3,7 +3,7 @@ package cards;
 import base.Card;
 
 public class Disenchant extends Card {
-	// one more try
+
 	public Disenchant() {
 		cardName = "Disenchant";
 		cardColor = "white";
