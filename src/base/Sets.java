@@ -2,6 +2,7 @@ package base;
 import java.util.*;
 
 public class Sets {
+	//static ArrayList<Card> newSet = new ArrayList<Card>();
 	
 	public static void sort(ArrayList<Card> set) {
 		for (int i = 0; i < set.size()-1; i++) {
@@ -19,17 +20,6 @@ public class Sets {
 				}
 			}
 		}
-	}
-	
-	public static void shuffle(ArrayList<Card> set) {
-		ArrayList<Card> newSet = new ArrayList<Card>();
-		while (set.size() > 0) {
-			int index = (int) (Math.random()*set.size());
-			newSet.add(set.get(index));
-			set.remove(index);
-		}
-		System.out.println(newSet.size());
-		set = newSet;
 	}
 
 	public static void swap(ArrayList<Card> list, int index1, int index2) {
@@ -148,6 +138,17 @@ public class Sets {
 		}
 
 		return s;
+	}
+	
+	public static ArrayList<Card> shuffle(ArrayList<Card> set) {
+		ArrayList<Card> newDeck = new ArrayList<Card>();
+		while (set.size() > 0) {
+			int index = (int) (Math.random()*set.size());
+			newDeck.add(set.get(index));
+			set.remove(index);
+		}
+		System.out.println(newDeck.size());
+		return newDeck;
 	}
 	
 	public static void show(ArrayList<Card> set, String setName) {

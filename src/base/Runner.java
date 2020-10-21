@@ -42,23 +42,27 @@ public class Runner {
 		takeFirstTurn();
 		
 
-		while (true) {
-			deck.add(new Plains());
+		/*while (true) {
+			for (int i = 0; i < 15; i++) {
+				deck.add(new Swamp());
+				deck.add(new Plains());
+			}
+			Sets.sort(deck);
 			Sets.show(deck, "deck");
-			Sets.shuffle(deck);
-		}
-		/*do {
+			shuffle();
+		}*/
+		do {
 			takeTurn();
 
 		} while (!canCastGoalCard());
-		*/
+		
 		//print("It took " + turn + " turns to cast one instance of " + goalCard.cardName + ".");
 	}
 
 	public static void takeFirstTurn() {
 		Sets.sort(deck);
 		Sets.show(deck, "deck");
-		Sets.shuffle(deck);
+		shuffle();
 		draw(7);
 		drewFirstTurn = false;
 		turn = 0;
@@ -262,6 +266,18 @@ public class Runner {
 		for (int i = 0; i < Sets.numLandsInSet(board); i++) {
 			manaPool.add(((Land) board.get(i)).color);
 		}
+	}
+	
+	public static void shuffle() {
+		/*ArrayList<Card> newDeck = new ArrayList<Card>();
+		while (deck.size() > 0) {
+			int index = (int) (Math.random()*deck.size());
+			newDeck.add(deck.get(index));
+			deck.remove(index);
+		}
+		System.out.println(newDeck.size());
+		deck = newDeck;*/
+		deck = Sets.shuffle(deck);
 	}
 
 	public static void clearManaPool() {
