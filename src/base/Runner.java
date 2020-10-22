@@ -260,15 +260,13 @@ public class Runner {
 	}
 
 	public static boolean boardHasReqForGoal() {
-		clearManaPool();
-		addMana();
 		if (!goalCard.multicolor) {
 			int num = 0;
-			for (String color: manaPool) {
-				if (color.equals(goalCard.cardColor)) {
+			for (int i = 0; i < board.numLands(); i++) {
+				Land z = (Land) board.get(i);
+				if (z.color.equals(goalCard.cardColor)) {
 					num++;
 					if (num == goalCard.coloredManaReq) {
-						clearManaPool();
 						return true;
 					}
 				}
@@ -276,7 +274,8 @@ public class Runner {
 		} else {
 			int[] nums = new int[goalCard.manaReqs.size()];
 			//nums[0] = 0; nums[1] = 0;
-			for (String color: manaPool) {
+			for (int z = 0; z < board.numLands(); z++) {
+				String color = ((Land) board.get(z)).color;
 				for (int i = 0; i < goalCard.colors.size(); i++) {
 					String col = goalCard.colors.get(i);
 					if (color.equals(col)) {
@@ -292,13 +291,12 @@ public class Runner {
 					}
 				}
 				if (hasReq) {
-					clearManaPool();
 					return true;
 				}
 			}
+			
 		}
 		
-		clearManaPool();
 		return false;
 	}
 
