@@ -22,12 +22,40 @@ public class Runner {
 	static int reps;
 	static int totalTurns = 0;
 	static boolean showStateOfPlay = false;
+	
+	
+	static final boolean INPUTTINGPARAMS = true;
+	
 
 	public static void main(String[] args) {
 		reset();
-		System.out.println("Enter a card name:");
-		goalCardName = reader.nextLine();
-		//goalCardName = "Murder";
+		if (INPUTTINGPARAMS) {
+			System.out.println("Enter a card name:");
+			goalCardName = reader.nextLine();
+			do {
+				print("Please enter a number of trials:");
+				reps = reader.nextInt();
+				if (reps <= 0) {
+					print("Pick a number greater than 0.");
+				} else if (reps >= REPLIM) {
+					print("That number exceeds the trial limit. Please pick a number less than or equal to 100,000.");
+				}
+			} while (reps <= 0 || reps > REPLIM);
+			print("Would you like to see updates on the state of the game as the trial goes on? Enter 'yes' if so:");
+			String ans = reader.next();
+			if (ans.equals("")) {
+				ans = reader.nextLine();
+			}
+			if (reps == 1 || ans.equals("yes") || ans.equals("y")) {
+				showStateOfPlay = true;
+			}
+			print("\n");
+		} else {
+			goalCardName = "Murder";
+			reps = 1;
+			showStateOfPlay = true;
+		}
+		
 		for (int i = 0; i < deck.size(); i++) {
 			Card c = deck.get(i);
 			if (c.cardName.equals(goalCardName)) {
@@ -35,25 +63,7 @@ public class Runner {
 				break;
 			}
 		}
-		do {
-			print("Please enter a number of trials:");
-			reps = reader.nextInt();
-			if (reps <= 0) {
-				print("Pick a number greater than 0.");
-			} else if (reps >= REPLIM) {
-				print("That number exceeds the trial limit. Please pick a number less than or equal to 100,000.");
-			}
-		} while (reps <= 0 || reps > REPLIM);
-		print("Would you like to see updates on the state of the game as the trial goes on? Enter 'yes' if so:");
-		String ans = reader.next();
-		if (ans.equals("")) {
-			ans = reader.nextLine();
-		}
-		if (reps == 1 || ans.equals("yes")) {
-			showStateOfPlay = true;
-		}
 		
-		print("\n");
 		deck.show();
 		
 		for (int i = 0; i < reps; i++) {
