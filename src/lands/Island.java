@@ -8,6 +8,5 @@ public class Island extends Land {
 		anyColor = false;
 		color = "blue";
 		cardName = "Island";
-		nameHasSAtEnd = false;
 	}
 }

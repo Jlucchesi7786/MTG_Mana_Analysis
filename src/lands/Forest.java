@@ -8,6 +8,5 @@ public class Forest extends Land {
 		anyColor = false;
 		color = "green";
 		cardName = "Forest";
-		nameHasSAtEnd = false;
 	}
 }

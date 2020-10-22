@@ -1,17 +1,13 @@
 package cards;
 
-import base.Card;
-
-public class Disenchant extends Card {
+public class Disenchant extends BasicCard {
 
 	public Disenchant() {
+		super();
 		cardName = "Disenchant";
 		cardColor = "white";
 		cardType = "Instant";
 		cmc = 2;
 		coloredManaReq = 1;
-		isManaSrc = false;
-		isLand = false;
-		nameHasSAtEnd = false;
 	}
 }

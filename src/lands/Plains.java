@@ -8,6 +8,5 @@ public class Plains extends Land {
 		anyColor = false;
 		color = "white";
 		cardName = "Plains";
-		nameHasSAtEnd = true;
 	}
 }

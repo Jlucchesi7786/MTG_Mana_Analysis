@@ -7,6 +7,5 @@ public class Swamp extends Land {
 		anyColor = false;
 		color = "black";
 		cardName = "Swamp";
-		nameHasSAtEnd = false;
 	}
 }

@@ -24,7 +24,7 @@ public class Runner {
 	static boolean showStateOfPlay = false;
 	
 	
-	static final boolean INPUTTINGPARAMS = true;
+	static final boolean INPUTTINGPARAMS = false;
 	
 
 	public static void main(String[] args) {
@@ -64,6 +64,7 @@ public class Runner {
 			}
 		}
 		
+		
 		deck.show();
 		
 		for (int i = 0; i < reps; i++) {
@@ -72,7 +73,7 @@ public class Runner {
 			
 			do {
 				takeTurn();
-			} while (!canCastGoalCard());
+			} while (!canCastGoalCard() && deck.size() > 0);
 			if (showStateOfPlay) {
 				print("It took " + turn + " turns to cast one instance of " + goalCard.cardName + ".");
 				print("");
@@ -89,6 +90,8 @@ public class Runner {
 				(((double) totalTurns)/(double) reps) + " turns to cast.");
 	}
 
+	
+	
 	public static void takeFirstTurn() {
 		deck.shuffle();
 		draw(7);
@@ -120,6 +123,9 @@ public class Runner {
 		ArrayList<Card> hand2 = new ArrayList<Card>();
 		playLand();
 		addMana();
+		/*if (boardHasManaReq(new Mortify())) {
+			test();
+		}*/
 		if (showStateOfPlay) {
 			board.show();
 			print("\n");
@@ -216,11 +222,35 @@ public class Runner {
 	}
 
 	public static boolean boardHasManaReq(Card c) {
-		int num = 0;
-		for (String color: manaPool) {
-			if (color.equals(c.cardColor)) {
-				num++;
-				if (num == c.coloredManaReq) {
+		if (!c.multicolor) {
+			int num = 0;
+			for (String color: manaPool) {
+				if (color.equals(c.cardColor)) {
+					num++;
+					if (num == c.coloredManaReq) {
+						return true;
+					}
+				}
+			}
+		} else {
+			int[] nums = new int[c.manaReqs.size()];
+			//nums[0] = 0; nums[1] = 0;
+			for (String color: manaPool) {
+				for (int i = 0; i < c.colors.size(); i++) {
+					String col = c.colors.get(i);
+					if (color.equals(col)) {
+						nums[i] = nums[i] + 1;
+						break;
+					}
+				}
+				boolean hasReq = true;
+				for (int i = 0; i < nums.length; i++) {
+					if (nums[i] != c.manaReqs.get(i)) {
+						hasReq = false;
+						break;
+					}
+				}
+				if (hasReq) {
 					return true;
 				}
 			}
@@ -230,17 +260,45 @@ public class Runner {
 	}
 
 	public static boolean boardHasReqForGoal() {
-		int num = 0;
-		for (int i = 0; i < board.numLands(); i++) {
-			Land z = (Land) board.get(i);
-			if (z.color.equals(goalCard.cardColor)) {
-				num++;
-				if (num == goalCard.coloredManaReq) {
+		clearManaPool();
+		addMana();
+		if (!goalCard.multicolor) {
+			int num = 0;
+			for (String color: manaPool) {
+				if (color.equals(goalCard.cardColor)) {
+					num++;
+					if (num == goalCard.coloredManaReq) {
+						clearManaPool();
+						return true;
+					}
+				}
+			}
+		} else {
+			int[] nums = new int[goalCard.manaReqs.size()];
+			//nums[0] = 0; nums[1] = 0;
+			for (String color: manaPool) {
+				for (int i = 0; i < goalCard.colors.size(); i++) {
+					String col = goalCard.colors.get(i);
+					if (color.equals(col)) {
+						nums[i] = nums[i] + 1;
+						break;
+					}
+				}
+				boolean hasReq = true;
+				for (int i = 0; i < nums.length; i++) {
+					if (nums[i] != goalCard.manaReqs.get(i)) {
+						hasReq = false;
+						break;
+					}
+				}
+				if (hasReq) {
+					clearManaPool();
 					return true;
 				}
 			}
 		}
-
+		
+		clearManaPool();
 		return false;
 	}
 

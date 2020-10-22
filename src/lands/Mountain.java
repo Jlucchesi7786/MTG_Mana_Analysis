@@ -8,6 +8,5 @@ public class Mountain extends Land {
 		anyColor = false;
 		color = "red";
 		cardName = "Mountain";
-		nameHasSAtEnd = false;
 	}
 }
