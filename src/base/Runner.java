@@ -51,7 +51,7 @@ public class Runner {
 			}
 			print("\n");
 		} else {
-			goalCardName = "Murder";
+			goalCardName = "Mortify";
 			reps = 1;
 			showStateOfPlay = true;
 		}
@@ -207,7 +207,13 @@ public class Runner {
 						manaNeeded = c.cardColor;
 					} else {
 						ArrayList<String> missingMana = whatIsBoardMissingToCast(c);
-						manaNeeded = missingMana.get((int) (Math.random()*((double) missingMana.size())));
+						if (missingMana.size() > 0) {
+							manaNeeded = missingMana.get((int) (Math.random()*((double) missingMana.size())));
+						} else {
+							if (hand.get(0).isLand) {
+								play(hand.get(0));
+							}
+						}
 					}
 					break;
 				}
@@ -470,7 +476,7 @@ public class Runner {
 		for (int i = 0; i < 4; i++) {
 			deck.add(new Murder());
 			deck.add(new Disenchant());
-			//deck.add(new Mortify());
+			deck.add(new Mortify());
 		}
 	}
 
