@@ -85,6 +85,7 @@ public class Sets {
 	}
 	
 	public static String read(ArrayList<Card> set, String setName) {
+		sort(set);
 		String s = "";
 		if (set.size() > 0) {
 			s += "Your " + setName + " consists of: ";
@@ -147,7 +148,6 @@ public class Sets {
 			newDeck.add(set.get(index));
 			set.remove(index);
 		}
-		System.out.println(newDeck.size());
 		return newDeck;
 	}
 	
