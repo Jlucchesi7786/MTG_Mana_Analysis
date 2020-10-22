@@ -16,6 +16,7 @@ public class Mortify extends MulticolorBasicCard {
 		
 		cardName = "Mortify";
 		cardType = "Instant";
+		coloredManaReq = 2;
 		cmc = 3;
 	}
 }

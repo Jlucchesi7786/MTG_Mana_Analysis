@@ -130,11 +130,12 @@ public class Runner {
 			board.show();
 			print("\n");
 		}
-		for (int i = 0; i < hand.size(); i++) {
+		for (int i = hand.numLands(); i < hand.size(); i++) {
 			Card c = hand.get(i);
 			hand2.add(c);
 		}
-		for (Card c: hand2) {
+		for (int i = 0; i < hand2.size(); i++) {
+			Card c = hand2.get(i);
 			if (c.equals(goalCard) && canCastGoalCard()) {
 				break;
 			}
@@ -175,19 +176,39 @@ public class Runner {
 		if (hand.cardIsInSet(goalCard) && !boardHasManaReq(goalCard)) {
 			for (int i = 0; i < hand.numLands(); i++) {
 				Land z = (Land) hand.get(i);
-				if (z.color.equals(goalCard.cardColor)) {
-					play(hand.get(i));
-					break;
+				if (!goalCard.multicolor) {
+					if (z.color.equals(goalCard.cardColor)) {
+						play(hand.get(i));
+						break;
+					}
+				} else {
+					ArrayList<String> landColorReqs = whatIsBoardMissingToCastGoal();
+					boolean playThisLand = false;
+					for (String color: landColorReqs) {
+						if (color.equals(z.color)) {
+							playThisLand = true;
+							break;
+						}
+					}
+					if (playThisLand) {
+						play(hand.get(i));
+						break;
+					}
 				}
 			}
 		} else {
 			boolean otherCardsInHand = false;
 			String manaNeeded = "";
-			for (int i = 0; i < hand.size(); i++) {
+			for (int i = hand.numLands(); i < hand.size(); i++) {
 				Card c = hand.get(i);
 				if (!c.isLand) {
 					otherCardsInHand = true;
-					manaNeeded = c.cardColor;
+					if (!c.multicolor) {
+						manaNeeded = c.cardColor;
+					} else {
+						ArrayList<String> missingMana = whatIsBoardMissingToCast(c);
+						manaNeeded = missingMana.get((int) (Math.random()*((double) missingMana.size())));
+					}
 					break;
 				}
 			}
@@ -219,6 +240,44 @@ public class Runner {
 			}
 			//play(hand.get(numLandsOfType(board.get(0), hand)));
 		}*/
+	}
+	
+	public static ArrayList<String> whatIsBoardMissingToCastGoal() {
+		ArrayList<String> missingColors = new ArrayList<String>();
+		for (String color: goalCard.colors) {
+			boolean boardDoesNotHave = true;
+			for (int i = 0; i < board.numLands(); i++) {
+				Land z = (Land) board.get(i);
+				if (color.equals(z.color)) {
+					boardDoesNotHave = false;
+					break;
+				}
+			}
+			if (boardDoesNotHave) {
+				missingColors.add(color);
+			}
+		}
+		
+		return missingColors;
+	}
+	
+	public static ArrayList<String> whatIsBoardMissingToCast(Card c) {
+		ArrayList<String> missingColors = new ArrayList<String>();
+		for (String color: c.colors) {
+			boolean boardDoesNotHave = true;
+			for (int i = 0; i < board.numLands(); i++) {
+				Land z = (Land) board.get(i);
+				if (color.equals(z.color)) {
+					boardDoesNotHave = false;
+					break;
+				}
+			}
+			if (boardDoesNotHave) {
+				missingColors.add(color);
+			}
+		}
+		
+		return missingColors;
 	}
 
 	public static boolean boardHasManaReq(Card c) {
@@ -313,22 +372,46 @@ public class Runner {
 	}
 
 	public static void cast(Card c) {
-		String req = c.cardColor;
-		
-		for (int i = 0; i < c.coloredManaReq; i++) {
-			for (String color: manaPool) {
-				if (req.equals(color)) {
-					manaPool.remove(color);
-					break;
+		if (!c.multicolor) {
+			String req = c.cardColor;
+			
+			for (int i = 0; i < c.coloredManaReq; i++) {
+				for (String color: manaPool) {
+					if (req.equals(color)) {
+						manaPool.remove(color);
+						break;
+					}
 				}
 			}
-		}
-		
-		for (int i = 0; i < c.cmc - c.coloredManaReq; i++) {
-			for (String color: manaPool) {
-				if (!req.equals(color)) {
-					manaPool.remove(color);
-					break;
+			
+			for (int i = 0; i < c.cmc - c.coloredManaReq; i++) {
+				for (String color: manaPool) {
+					if (!req.equals(color)) {
+						manaPool.remove(color);
+						break;
+					}
+				}
+			}
+		} else {
+			ArrayList<String> reqs = c.colors;
+			for (int z = 0; z < reqs.size(); z++) {
+				String req = reqs.get(z);
+				for (int i = 0; i < c.manaReqs.get(z); i++) {
+					for (String color: manaPool) {
+						if (req.equals(color)) {
+							manaPool.remove(color);
+							break;
+						}
+					}
+				}
+			}
+			
+			for (int i = 0; i < c.cmc - c.coloredManaReq; i++) {
+				for (String color: manaPool) {
+					if (reqs.get(0).equals(color)) {
+						manaPool.remove(color);
+						break;
+					}
 				}
 			}
 		}
@@ -387,6 +470,7 @@ public class Runner {
 		for (int i = 0; i < 4; i++) {
 			deck.add(new Murder());
 			deck.add(new Disenchant());
+			//deck.add(new Mortify());
 		}
 	}
 
