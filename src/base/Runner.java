@@ -52,8 +52,8 @@ public class Runner {
 			print("\n");
 		} else {
 			goalCardName = "Mortify";
-			reps = 10;
-			showStateOfPlay = true;
+			reps = 400000;
+			showStateOfPlay = false;
 		}
 		
 		for (int i = 0; i < deck.size(); i++) {
@@ -123,9 +123,6 @@ public class Runner {
 		ArrayList<Card> hand2 = new ArrayList<Card>();
 		playLand();
 		addMana();
-		/*if (boardHasManaReq(new Mortify())) {
-			test();
-		}*/
 		if (showStateOfPlay) {
 			print("State of board after playing a land:");
 			board.show();
@@ -134,14 +131,20 @@ public class Runner {
 			Card c = hand.get(i);
 			hand2.add(c);
 		}
+		for (int i = 0; i < Sets.numDrawCardsInSet(hand2); i++) {
+			for (int z = 0; z < hand2.size(); z++) {
+				if (hand2.get(z).isDrawCard) {
+					Sets.swap(hand2, z, i);
+					break;
+				}
+			}
+		}
 		for (int i = 0; i < hand2.size(); i++) {
 			Card c = hand2.get(i);
 			if (c.equals(goalCard) && canCastGoalCard()) {
 				break;
 			}
-			if (!c.isLand) {
-				play(c);
-			}
+			play(c);
 		}
 		clearManaPool();
 		if (showStateOfPlay) {
@@ -268,6 +271,10 @@ public class Runner {
 			cast(c);
 			hand.remove(c);
 			board.add(c);
+			if (c.isDrawCard) {
+				DrawCard z = (DrawCard) c;
+				draw(z.drawAmount);
+			}
 		}
 		board.sort();
 	}
@@ -485,7 +492,7 @@ public class Runner {
 				board.remove(board.get(0));
 			}
 		}
-		for (int i = 0; i < 15; i++) {
+		for (int i = 0; i < 24; i++) {
 			deck.add(new Swamp());
 			deck.add(new Plains());
 		}

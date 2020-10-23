@@ -38,6 +38,30 @@ public class Sets {
 		return false;
 	}
 	
+	public static boolean drawCardInSet(ArrayList<Card> set) {
+		for (Card c: set) {
+			if (c.isDrawCard) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public static int numDrawCardsInSet(ArrayList<Card> set) {
+		if (!drawCardInSet(set)) {
+			return 0;
+		}
+		int num = 0;
+		for (Card c: set) {
+			if (c.isDrawCard) {
+				num++;
+			}
+		}
+		
+		return num;
+	}
+	
 	public static int numLandsInSet(ArrayList<Card> set) {
 		if (set.size() == 0) {
 			return 0;

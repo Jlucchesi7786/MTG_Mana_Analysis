@@ -51,6 +51,14 @@ public class Set {
 		return Sets.numLandsOfType(cardName, set);
 	}
 	
+	public boolean hasDrawCard() {
+		return Sets.drawCardInSet(set);
+	}
+	
+	public int numDrawCards() {
+		return Sets.numDrawCardsInSet(set);
+	}
+	
 	
 	
 	
