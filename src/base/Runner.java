@@ -127,8 +127,8 @@ public class Runner {
 			test();
 		}*/
 		if (showStateOfPlay) {
+			print("State of board after playing a land:");
 			board.show();
-			print("\n");
 		}
 		for (int i = hand.numLands(); i < hand.size(); i++) {
 			Card c = hand.get(i);
@@ -144,6 +144,11 @@ public class Runner {
 			}
 		}
 		clearManaPool();
+		if (showStateOfPlay) {
+			print("State of board at end of turn:");
+			board.show();
+			print("\n");
+		}
 	}
 
 	public static void draw(int num) {
@@ -173,27 +178,34 @@ public class Runner {
 			return;
 		}
 
-		if (hand.cardIsInSet(goalCard) && !boardHasManaReq(goalCard)) {
-			for (int i = 0; i < hand.numLands(); i++) {
-				Land z = (Land) hand.get(i);
-				if (!goalCard.multicolor) {
-					if (z.color.equals(goalCard.cardColor)) {
-						play(hand.get(i));
-						break;
-					}
-				} else {
-					ArrayList<String> landColorReqs = whatIsBoardMissingToCastGoal();
-					boolean playThisLand = false;
-					for (String color: landColorReqs) {
-						if (color.equals(z.color)) {
-							playThisLand = true;
+		if (hand.cardIsInSet(goalCard)) {
+			if (!boardHasReqForGoal()) {
+				for (int i = 0; i < hand.numLands(); i++) {
+					Land z = (Land) hand.get(i);
+					if (!goalCard.multicolor) {
+						if (z.color.equals(goalCard.cardColor)) {
+							play(hand.get(i));
+							break;
+						}
+					} else {
+						ArrayList<String> landColorReqs = whatIsBoardMissingToCastGoal();
+						
+						boolean playThisLand = false;
+						for (String color: landColorReqs) {
+							if (color.equals(z.color)) {
+								playThisLand = true;
+								break;
+							}
+						}
+						if (playThisLand) {
+							play(hand.get(i));
 							break;
 						}
 					}
-					if (playThisLand) {
-						play(hand.get(i));
-						break;
-					}
+				}
+			} else {
+				if (hand.get(0).isLand) {
+					play(hand.get(0));
 				}
 			}
 		} else {
@@ -325,6 +337,7 @@ public class Runner {
 	}
 
 	public static boolean boardHasReqForGoal() {
+		//System.out.println(goalCard.multicolor);
 		if (!goalCard.multicolor) {
 			int num = 0;
 			for (int i = 0; i < board.numLands(); i++) {
@@ -338,19 +351,18 @@ public class Runner {
 			}
 		} else {
 			int[] nums = new int[goalCard.manaReqs.size()];
-			//nums[0] = 0; nums[1] = 0;
 			for (int z = 0; z < board.numLands(); z++) {
 				String color = ((Land) board.get(z)).color;
 				for (int i = 0; i < goalCard.colors.size(); i++) {
 					String col = goalCard.colors.get(i);
-					if (color.equals(col)) {
-						nums[i] = nums[i] + 1;
+					if (col.equals(color)) {
+						nums[i]++;
 						break;
 					}
 				}
 				boolean hasReq = true;
 				for (int i = 0; i < nums.length; i++) {
-					if (nums[i] != goalCard.manaReqs.get(i)) {
+					if (!(nums[i] >= goalCard.manaReqs.get(i))) {
 						hasReq = false;
 						break;
 					}
