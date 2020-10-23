@@ -8,5 +8,6 @@ public abstract class BasicCard extends Card {
 		isManaSrc = false;
 		isLand = false;
 		multicolor = false;
+		isDrawCard = false;
 	}
 }
