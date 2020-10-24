@@ -7,6 +7,7 @@ public class Runner {
 	static Set deck = new Set("deck");
 	static Set hand = new Set("hand");
 	static Set board = new Set("board");
+	static Set gyard = new Set("graveyard");
 	//static boolean landPlayed = false;
 	static Scanner reader = new Scanner(System.in);
 	static int goalCmc;
@@ -52,8 +53,8 @@ public class Runner {
 			print("\n");
 		} else {
 			goalCardName = "Mortify";
-			reps = 400000;
-			showStateOfPlay = false;
+			reps = 1;
+			showStateOfPlay = true;
 		}
 		
 		for (int i = 0; i < deck.size(); i++) {
@@ -108,6 +109,54 @@ public class Runner {
 			drewFirstTurn = true;
 		}
 	}
+	
+	public static void discard() {
+		if (board.numLands() >= goalCard.cmc) {
+			if (hand.numTypeOfLands() == 1) {
+				gyard.add(hand.get(0));
+				print("Discarded a " + hand.get(0).cardName + "!");
+				hand.remove(0);
+				return;
+			} else if (hand.numTypeOfLands() > 1) {
+				int[] landNums = new int[board.numTypeOfLands()];
+				int index = 0;
+				String landName = "";
+				for (int i = 1; i < board.numLands(); i++) {
+					Land c = (Land) board.get(i);
+					if (!c.equals(board.get(i-1))) {
+						index ++;
+					}
+					landNums[index]++;
+				}
+				
+				for (int i = 1; i < landNums.length; i++) {
+					if (landNums[i] > landNums[i-1]) {
+						int index2 = 0;
+						for (int z = 0; z < i; z++) {
+							index2 ++;
+						}
+						landName = board.get(index2).cardName;
+					}
+				}
+				
+				for (int i = 0; i < hand.numLands(); i++) {
+					Land c = (Land) hand.get(i);
+					if (c.cardName.equals(landName)) {
+						gyard.add(c);
+						hand.remove(c);
+						print("Discarded a " + c.cardName + "!");
+						return;
+					}
+				}
+			}
+		}
+	}
+	
+	public static void discard(int num) {
+		for (int i = 0; i < num; i++) {
+			discard();
+		}
+	}
 
 	public static void takeTurn() {
 		turn++;
@@ -147,6 +196,9 @@ public class Runner {
 			play(c);
 		}
 		clearManaPool();
+		if (hand.size() > 7) {
+			discard(hand.size()-7);
+		}
 		if (showStateOfPlay) {
 			print("State of board at end of turn:");
 			board.show();

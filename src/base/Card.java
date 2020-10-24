@@ -7,6 +7,7 @@ public abstract class Card {
 
 	protected boolean isManaSrc;
 	protected boolean isLand;
+	protected boolean isPermanent;
 	protected boolean isDrawCard;
 	
 	protected boolean multicolor;
