@@ -52,9 +52,9 @@ public class Runner {
 			}
 			print("\n");
 		} else {
-			goalCardName = "Mortify";
-			reps = 1;
-			showStateOfPlay = true;
+			goalCardName = "Murder";
+			reps = 500000;
+			showStateOfPlay = false;
 		}
 		
 		for (int i = 0; i < deck.size(); i++) {
@@ -111,12 +111,14 @@ public class Runner {
 	}
 	
 	public static void discard() {
+		hand.sort();
+		String cardName = "";
+		
 		if (board.numLands() >= goalCard.cmc) {
 			if (hand.numTypeOfLands() == 1) {
 				gyard.add(hand.get(0));
-				print("Discarded a " + hand.get(0).cardName + "!");
+				cardName = hand.get(0).cardName;
 				hand.remove(0);
-				return;
 			} else if (hand.numTypeOfLands() > 1) {
 				int[] landNums = new int[board.numTypeOfLands()];
 				int index = 0;
@@ -144,11 +146,46 @@ public class Runner {
 					if (c.cardName.equals(landName)) {
 						gyard.add(c);
 						hand.remove(c);
-						print("Discarded a " + c.cardName + "!");
-						return;
+						cardName = c.cardName;
+						break;
 					}
 				}
 			}
+		} else {
+			if (hand.cardIsInSet(goalCard)) {
+				for (int i = 0; i < hand.size(); i++) {
+					Card c = hand.get(i);
+					if (c.isDrawCard) {
+						gyard.add(c);
+						hand.remove(c);
+						cardName = c.cardName;
+						break;
+					}
+				}
+				if (cardName.equals("") ) {
+					int highestCmc = 0;
+					for (int i = 0; i < hand.size(); i++) {
+						Card c = hand.get(i);
+						if (c.cmc > highestCmc && !c.equals(goalCard) && !c.isDrawCard) {
+							highestCmc = c.cmc;
+						}
+					}
+					
+					for (int i = 0; i < hand.size(); i++) {
+						Card c = hand.get(i);
+						if (c.cmc == highestCmc && !c.equals(goalCard) && !c.isDrawCard) {
+							gyard.add(c);
+							hand.remove(c);
+							cardName = c.cardName;
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		if (showStateOfPlay) {
+			print("Discarded a " + cardName + "!");
 		}
 	}
 	
