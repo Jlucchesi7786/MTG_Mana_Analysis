@@ -1,6 +1,13 @@
 package base;
 import java.util.*;
 
+/**
+ * A <code>Set</code> is an object that holds an ArrayList of <code>Card</code>s and can return certain information about
+ * the set and the cards inside it, mainly using the <code>Sets</code> class.
+ * @author JL
+ * @see Card
+ * @see Sets
+ */
 public class Set {
 	ArrayList<Card> set;
 	String name;
@@ -21,6 +28,7 @@ public class Set {
 		this.set = set;
 		this.name = name;
 	}
+	
 	
 	
 	public void shuffle() {
@@ -58,7 +66,6 @@ public class Set {
 	public int numDrawCards() {
 		return Sets.numDrawCardsInSet(set);
 	}
-	
 	
 	
 	

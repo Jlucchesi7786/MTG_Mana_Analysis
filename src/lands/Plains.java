@@ -3,10 +3,9 @@ package lands;
 public class Plains extends Land {
 	
 	public Plains() {
-		super();
+		super("Plains");
 		basic = true;
 		anyColor = false;
 		color = "white";
-		cardName = "Plains";
 	}
 }

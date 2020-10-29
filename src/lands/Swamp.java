@@ -2,10 +2,9 @@ package lands;
 public class Swamp extends Land {
 	
 	public Swamp() {
-		super();
+		super("Swamp");
 		basic = true;
 		anyColor = false;
 		color = "black";
-		cardName = "Swamp";
 	}
 }

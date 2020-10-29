@@ -90,8 +90,6 @@ public class Runner {
 		print("\nAcross " + reps + " trials, " + goalCard.cardName + " took an average of " + 
 				(((double) totalTurns)/(double) reps) + " turns to cast.");
 	}
-
-	
 	
 	public static void takeFirstTurn() {
 		deck.shuffle();
@@ -107,6 +105,76 @@ public class Runner {
 				print("\n");
 			}
 			drewFirstTurn = true;
+		}
+	}
+
+	public static void takeTurn() {
+		turn++;
+
+		if (turn != 1) {
+			draw();
+		}
+		hand.sort();
+		board.sort();
+		if (showStateOfPlay) {
+			hand.show();
+		}
+		ArrayList<Card> hand2 = new ArrayList<Card>();
+		playLand();
+		addMana();
+		if (showStateOfPlay) {
+			print("State of board after playing a land:");
+			board.show();
+		}
+		for (int i = hand.numLands(); i < hand.size(); i++) {
+			Card c = hand.get(i);
+			hand2.add(c);
+		}
+		for (int i = 0; i < Sets.numDrawCardsInSet(hand2); i++) {
+			for (int z = 0; z < hand2.size(); z++) {
+				if (hand2.get(z).isDrawCard) {
+					Sets.swap(hand2, z, i);
+					break;
+				}
+			}
+		}
+		for (int i = 0; i < hand2.size(); i++) {
+			Card c = hand2.get(i);
+			if (c.equals(goalCard) && canCastGoalCard()) {
+				break;
+			}
+			play(c);
+		}
+		clearManaPool();
+		if (hand.size() > 7) {
+			discard(hand.size()-7);
+		}
+		if (showStateOfPlay) {
+			print("State of board at end of turn:");
+			board.show();
+			print("\n");
+		}
+	}
+
+	public static void draw(int num) {
+		for (int i = 0; i < num; i++) {
+			draw();
+		}
+	}
+
+	public static void draw() {
+		if (deck.size() > 0) {
+			hand.add(deck.get(0));
+			if (showStateOfPlay) {
+				print("Drew a "+ deck.get(0).cardName + "!");				
+			}
+			deck.remove(0);
+		}
+	}
+	
+	public static void discard(int num) {
+		for (int i = 0; i < num; i++) {
+			discard();
 		}
 	}
 	
@@ -186,76 +254,6 @@ public class Runner {
 		
 		if (showStateOfPlay) {
 			print("Discarded a " + cardName + "!");
-		}
-	}
-	
-	public static void discard(int num) {
-		for (int i = 0; i < num; i++) {
-			discard();
-		}
-	}
-
-	public static void takeTurn() {
-		turn++;
-
-		if (turn != 1) {
-			draw();
-		}
-		hand.sort();
-		board.sort();
-		if (showStateOfPlay) {
-			hand.show();
-		}
-		ArrayList<Card> hand2 = new ArrayList<Card>();
-		playLand();
-		addMana();
-		if (showStateOfPlay) {
-			print("State of board after playing a land:");
-			board.show();
-		}
-		for (int i = hand.numLands(); i < hand.size(); i++) {
-			Card c = hand.get(i);
-			hand2.add(c);
-		}
-		for (int i = 0; i < Sets.numDrawCardsInSet(hand2); i++) {
-			for (int z = 0; z < hand2.size(); z++) {
-				if (hand2.get(z).isDrawCard) {
-					Sets.swap(hand2, z, i);
-					break;
-				}
-			}
-		}
-		for (int i = 0; i < hand2.size(); i++) {
-			Card c = hand2.get(i);
-			if (c.equals(goalCard) && canCastGoalCard()) {
-				break;
-			}
-			play(c);
-		}
-		clearManaPool();
-		if (hand.size() > 7) {
-			discard(hand.size()-7);
-		}
-		if (showStateOfPlay) {
-			print("State of board at end of turn:");
-			board.show();
-			print("\n");
-		}
-	}
-
-	public static void draw(int num) {
-		for (int i = 0; i < num; i++) {
-			draw();
-		}
-	}
-
-	public static void draw() {
-		if (deck.size() > 0) {
-			hand.add(deck.get(0));
-			if (showStateOfPlay) {
-				print("Drew a "+ deck.get(0).cardName + "!");				
-			}
-			deck.remove(0);
 		}
 	}
 
