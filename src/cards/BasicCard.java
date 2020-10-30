@@ -7,6 +7,7 @@ import base.Card;
  * <code>multicolor</code> to false. Cards that follow those parameters inherit directly from this class, but even 
  * the other important cards inherit from this class to make everything a lot smoother.
  * @author JL
+ * @see Card
  */
 public abstract class BasicCard extends Card {
 	
